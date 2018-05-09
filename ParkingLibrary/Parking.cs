@@ -50,11 +50,26 @@ namespace ParkingLibrary
             Console.WriteLine("DeleteCar");
         }
 
+        private decimal GetPayment(Car car)
+        {
+            var found = Settings.Prices.TryGetValue(car.Type, out decimal price);
+            if (!found)
+            {
+                throw new ArgumentException($"Type {(int)car.Type} not found");
+            }
+            if (car.Balance >= price)
+            {
+                return price;
+            }
+            return Settings.Fine * price;
+        }
+
         public void DebitMoney(Car car)
         {
-            Tracsaction tracsaction = new Tracsaction(car);
-            Balance += tracsaction.Payment;
-            BalanceMinute += tracsaction.Payment;
+            Tracsaction tracsaction = new Tracsaction(car.Id, GetPayment(car), DateTime.Now);
+            Balance += tracsaction.payment;
+            BalanceMinute += tracsaction.payment;
+
             Tracsactions.Add(tracsaction);
             Console.WriteLine("DebitMoney");
         }

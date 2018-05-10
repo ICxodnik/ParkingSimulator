@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace ParkingLibrary
 {
-    public class Parking
+    public class Parking : IDisposable
     {
         private List<Car> Cars = new List<Car>();
         private List<Tracsaction> Tracsactions = new List<Tracsaction>();
         decimal Balance { get; set; } = 0;
         decimal BalanceMinute { get; set; } = 0;
+
+        private Logger logger = new Logger("Transactions.log");
 
         public void AddCar(Car car)
         {
@@ -66,12 +68,16 @@ namespace ParkingLibrary
 
         public void DebitMoney(Car car)
         {
-            Tracsaction tracsaction = new Tracsaction(car.Id, GetPayment(car), DateTime.Now);
-            Balance += tracsaction.payment;
-            BalanceMinute += tracsaction.payment;
+            Tracsaction transaction = new Tracsaction(car.Id, GetPayment(car), DateTime.Now);
+            Balance += transaction.payment;
+            BalanceMinute += transaction.payment;
 
-            Tracsactions.Add(tracsaction);
+            Tracsactions.Add(transaction);
             Console.WriteLine("DebitMoney");
+
+            var log = $"{transaction.date.ToUniversalTime()} - transfer {transaction.payment} grn from car {transaction.carId}";
+            logger.WriteLine(log);
+            Console.WriteLine(log);
         }
 
         public int GetFreePlace()
@@ -83,6 +89,11 @@ namespace ParkingLibrary
         {
             Console.WriteLine(BalanceMinute + " = profit for minute");
             BalanceMinute = 0;
+        }
+
+        public void Dispose()
+        {
+            logger.Dispose();
         }
     }
 }

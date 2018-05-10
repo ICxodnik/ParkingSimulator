@@ -11,14 +11,17 @@ namespace ParkingSimulator
     {
         static void Main(string[] args)
         {
-            Parking parking = new Parking();
-            parking.AddCar(new Car(50, CarType.Motorcycle));
-            parking.AddCar(new Car(10, CarType.Bus));
-            parking.AddCar(new Car(15, CarType.Truck));
+
+            using (Parking parking = new Parking())
+            {
+                parking.AddCar(new Car(50, CarType.Motorcycle));
+                parking.AddCar(new Car(10, CarType.Bus));
+                parking.AddCar(new Car(15, CarType.Truck));
 
 
-            parking.StartWorking();
-            Console.ReadLine();
+                parking.StartWorking();
+                Console.ReadLine();
+            }
         }
     }
 }

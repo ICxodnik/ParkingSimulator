@@ -2,7 +2,7 @@
 {
     public enum CarType
     {
-        Passenger,
+        Passenger = 1,
         Truck,
         Bus,
         Motorcycle

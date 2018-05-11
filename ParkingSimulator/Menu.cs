@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace ParkingSimulator
 {
-    static class Menu
+    class Menu
     {
-        public static void BasicMenu()
+        private static Menu instance = new Menu();
+        Menu()
+        {
+
+        }
+
+        public void BasicMenu()
         {
             Console.WriteLine("1 - add new car to parking place");
             Console.WriteLine("2 - remove car from parking place");
@@ -21,5 +27,7 @@ namespace ParkingSimulator
             Console.WriteLine("9 - parking income by last minute");
             Console.WriteLine("q - Exit");
         }
+
+        public static Menu Instance { get { return instance; } }
     }
 }

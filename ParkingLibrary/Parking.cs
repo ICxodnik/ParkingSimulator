@@ -51,7 +51,6 @@ namespace ParkingLibrary
         public void Timer(object obj)
         {
             Cars.ForEach(x => DebitMoney(x));
-            Console.WriteLine("Timer");
         }
 
         public string RemoveCar(int id)

@@ -10,30 +10,34 @@ namespace ParkingLibrary
 {
     public class Parking : IDisposable
     {
-        private List<Car> Cars = new List<Car>();
+        public List<Car> Cars = new List<Car>();
         private List<Transaction> Tracsactions = new List<Transaction>();
         private Timer paymentTimer;
         private Timer retentionTimer;
-        decimal Balance { get; set; } = 0;
+        public decimal Balance { get; set; } = 0;
 
         private Logger logger = new Logger("Transactions.log");
 
-        public void AddCar(Car car)
+        public string AddCar(Car car)
         {
-            if(!Cars.Exists(x=> x == car))
+            if (GetFreePlace() > 0)
             {
-                Cars.Add(car);
+                if (!Cars.Exists(x => x == car))
+                {
+                    Cars.Add(car);
+                    return "Done.";
+                }
+                return "Car already exist";
             }
-            else throw new Exception("Car already exist");
-
+            else return "Don't have free place";
         }
 
-        public void StartWorking()
+        public string StartWorking()
         {
             paymentTimer = new Timer(Timer, 0, new TimeSpan(0, 0, 10), Settings.Timer);
-            retentionTimer = new Timer((object obj) => DumpLastTransactions(), 0, 0, 25000);
+            retentionTimer = new Timer((object obj) => DumpLastTransactions(), 0, 0, 60000);
+            return "Done.";
 
-            Console.WriteLine("StartWorking");
         }
 
         private void DumpLastTransactions()
@@ -50,14 +54,15 @@ namespace ParkingLibrary
             Console.WriteLine("Timer");
         }
 
-        public void RemoveCar(Car car)
+        public string RemoveCar(int id)
         {
-            if (Cars.Exists(x => x == car))
+            
+            if (Cars.Exists(x => x.Id == id))
             {
-                Cars.Remove(car);
+                Cars = Cars.Where(x => x.Id != id).ToList();
             }
-            else throw new ArgumentNullException("Car don't exist");
-            Console.WriteLine("DeleteCar");
+            else return "Car don't exist";
+            return "Done.";
         }
 
         private decimal GetPayment(Car car)
@@ -74,7 +79,7 @@ namespace ParkingLibrary
             return Settings.Fine * price;
         }
 
-        public void DebitMoney(Car car)
+        public string DebitMoney(Car car)
         {
             Transaction transaction = new Transaction(car.Id, GetPayment(car), DateTime.Now);
             Balance += transaction.payment;
@@ -82,7 +87,9 @@ namespace ParkingLibrary
             Tracsactions.Add(transaction);
 
             var log = $"{transaction.date.ToUniversalTime()} - transfer {transaction.payment} grn from car {transaction.carId}";
-            Console.WriteLine(log);
+            logger.WriteLine(log);
+            return "Done.";
+
         }
 
         public IList<Transaction> GetTransactions(bool removeOlder = false)
@@ -97,6 +104,19 @@ namespace ParkingLibrary
             return transactions;
         }
 
+        public decimal GetSumMinute()
+        {
+            decimal sum = 0;
+            var transac = GetTransactions();
+            foreach (Transaction tranc in transac)
+                sum += tranc.payment;
+            return sum;
+        }
+        public int GetBusyPlace()
+        {
+            return Cars.Count;
+        }
+
         public int GetFreePlace()
         {
             return Settings.ParkingSpace - Cars.Count;
@@ -107,6 +127,13 @@ namespace ParkingLibrary
             paymentTimer.Dispose();
             retentionTimer.Dispose();
             logger.Dispose();
+        }
+
+        public string AddBalanceCar(decimal balance, int id)
+        {
+            Cars.First(x => x.Id == id).AddBalance(balance);
+            return "Done.";
+
         }
     }
 }

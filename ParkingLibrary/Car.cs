@@ -17,13 +17,24 @@ namespace ParkingLibrary
 
         public Car(decimal balance, CarType type)
         {
+            Type = type;
+            Id = NextId;
             Balance = balance;
+        }
+
+        public Car(CarType type)
+        {
             Type = type;
             Id = NextId;
         }
         public void ReplenishBalance(decimal replenish)
         {
             Balance += replenish;
+        }
+
+        public void AddBalance(decimal balance)
+        {
+            Balance = balance;
         }
     }
 }

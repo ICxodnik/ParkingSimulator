@@ -56,12 +56,13 @@ namespace ParkingLibrary
 
         public string RemoveCar(int id)
         {
-            
-            if (Cars.Exists(x => x.Id == id))
+            var car = Cars.FirstOrDefault(x => x.Id == id);
+            if (car == null) { return "No such car"; }
+            if (car.Balance > 0)
             {
                 Cars = Cars.Where(x => x.Id != id).ToList();
             }
-            else return "Car don't exist";
+            else return "Car has debt";
             return "Done.";
         }
 

@@ -7,13 +7,13 @@ using System.IO;
 
 namespace ParkingLibrary
 {
-    public class Tracsaction
+    public class Transaction
     {
         public readonly DateTime date;
         public readonly int carId;
         public readonly decimal payment;
 
-        public Tracsaction(int carId, decimal payment, DateTime date)
+        public Transaction(int carId, decimal payment, DateTime date)
         {
             this.date = date;
             this.carId = carId;

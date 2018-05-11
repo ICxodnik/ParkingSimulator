@@ -11,7 +11,7 @@ namespace ParkingLibrary
     public class Parking : IDisposable
     {
         private List<Car> Cars = new List<Car>();
-        private List<Tracsaction> Tracsactions = new List<Tracsaction>();
+        private List<Transaction> Tracsactions = new List<Transaction>();
         decimal Balance { get; set; } = 0;
         decimal BalanceMinute { get; set; } = 0;
 
@@ -68,7 +68,7 @@ namespace ParkingLibrary
 
         public void DebitMoney(Car car)
         {
-            Tracsaction transaction = new Tracsaction(car.Id, GetPayment(car), DateTime.Now);
+            Transaction transaction = new Transaction(car.Id, GetPayment(car), DateTime.Now);
             Balance += transaction.payment;
             BalanceMinute += transaction.payment;
 
@@ -78,6 +78,13 @@ namespace ParkingLibrary
             var log = $"{transaction.date.ToUniversalTime()} - transfer {transaction.payment} grn from car {transaction.carId}";
             logger.WriteLine(log);
             Console.WriteLine(log);
+        }
+
+        public IList<Transaction> GetTransactions()
+        {
+            var now = DateTime.Now;
+            var transactionRetentionTime = TimeSpan.FromMinutes(1);
+            return Tracsactions.Where(tr => tr.date - now <= transactionRetentionTime).ToList();
         }
 
         public int GetFreePlace()

@@ -16,11 +16,12 @@ namespace ParkingLibrary
         public Logger(string filename)
         {
             file = File.AppendText(filename);
+            file.AutoFlush = true;
         }
 
         public void WriteLine(string line)
         {
-            file.Write(line + "\n");
+            file.Write(line + "\r\n");
         }
 
         public void Dispose()

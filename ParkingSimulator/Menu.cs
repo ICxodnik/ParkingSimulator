@@ -62,9 +62,7 @@ namespace ParkingSimulator
 
         public void ShowLog()
         {
-            var transac = Parking.Instance.GetTransactions();
-            foreach (Transaction tranc in transac)
-                Console.WriteLine($"Id {tranc.carId}, date {tranc.date}, payment{tranc.payment} grn");
+            Parking.Instance.ShowTransaction();
         }
 
         public void CountBusySpace()

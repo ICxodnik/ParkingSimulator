@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ParkingWeb_Api.Controllers
 {
     [Route("api/[controller]")]
-    public class ValuesController : Controller
+    public class CarController : Controller
     {
         // GET api/values
         [HttpGet]

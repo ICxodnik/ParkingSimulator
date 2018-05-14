@@ -27,14 +27,10 @@ namespace ParkingLibrary
             Type = type;
             Id = NextId;
         }
-        public void ReplenishBalance(decimal replenish)
-        {
-            Balance += replenish;
-        }
 
         public void AddBalance(decimal balance)
         {
-            Balance = balance;
+            Balance += balance;
         }
     }
 }

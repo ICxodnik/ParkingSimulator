@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
 using ParkingLibrary;
 using ParkingWeb_Api.Model.Entity;
 using ParkingWeb_Api.Repositories;
@@ -7,15 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ParkingWeb_Api.Services
+namespace ParkingWeb_Api.Controllers
 {
-    public class TransactionService
+    public class TransactionController : Controller
     {
         TransactionRepository _repositoryTranc;
         CarRepository _repositoryCar;
 
-        public TransactionService(TransactionRepository repositoryTranc, CarRepository repositoryCar)
+        public TransactionController(TransactionRepository repositoryTranc, CarRepository repositoryCar, Parking parking)
         {
+            _parking = parking;
             _repositoryTranc = repositoryTranc;
             _repositoryCar = repositoryCar;
 

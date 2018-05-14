@@ -11,13 +11,11 @@ namespace ParkingSimulator
     {
         static void Main(string[] args)
         {
-            Parking park = new Parking();
-            park.AddCar(new Car(50, CarType.Motorcycle));
-            park.AddCar(new Car(10, CarType.Bus));
-            park.AddCar(new Car(15, CarType.Truck));
+            Parking.Instance.AddCar(new Car(50, CarType.Motorcycle));
+            Parking.Instance.AddCar(new Car(10, CarType.Bus));
+            Parking.Instance.AddCar(new Car(15, CarType.Truck));
 
-
-            park.StartWorking();
+            Parking.Instance.StartWorking();
 
             while (true)
             {
@@ -27,77 +25,45 @@ namespace ParkingSimulator
                 Console.WriteLine();
                 switch (input.KeyChar)
                 {
-
+                    case '0':
+                        Menu.Instance.ShowBalanceOfCar();
+                        break;
                     case '1':
-                        Console.WriteLine("select car type or input q back to main menu");
-                        Console.WriteLine("1 - Passenger");
-                        Console.WriteLine("2 - Truck");
-                        Console.WriteLine("3 - Bus");
-                        Console.WriteLine("4 -Motorcycle +\n");
-                        int type = Convert.ToInt32(Console.ReadKey());
-                        Console.WriteLine(park.AddCar(new Car((CarType)type)));
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.AddNewcar();
                         break;
                     case '2':
-                        Console.WriteLine("Input id car or input q back to main menu");
-                        int id = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine(park.RemoveCar(id));
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.RemoveCar();
                         break;
                     case '3':
-                        Console.WriteLine("Input id car or input q back to main menu");
-                        int idcar = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("Input balance or input q back to main menu");
-                        decimal balance = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine(park.AddBalanceCar(balance, idcar));
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.AddBalance();
                         break;
                     case '4':
-                        foreach(Car car in park.Cars)
-                            Console.WriteLine($"Id {car.Id}, type {car.Type}, balance{car.Balance}");
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.ShowListOfCars();
                         break;
                     case '5':
-                        Console.WriteLine("Count free places " + park.GetFreePlace());
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.CountFreeSpace();
                         break;
                     case '6':
-                        Console.WriteLine("Count busy places " + park.GetBusyPlace());
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.CountBusySpace();
                         break;
                     case '7':
-                        var transac = park.GetTransactions();
-                        foreach (Transaction tranc in transac)
-                            Console.WriteLine($"Id {tranc.carId}, date {tranc.date}, payment{tranc.payment} grn");
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.ShowLog();
                         break;
                     case '8':
-                        Console.WriteLine("Total parking balance " + park.Balance);
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.TotalParkingIncome();
                         break;
                     case '9':
-                        Console.WriteLine("Balance for last minute " + park.GetSumMinute());
-                        Console.ReadKey();
-                        Menu.Instance.BasicMenu();
+                        Menu.Instance.ParkingIncomeByLastMinute();
                         break;
                     case 'q':
                         Console.Clear();
-                        Menu.Instance.BasicMenu();
                         break;
                     default:
-                        Console.WriteLine("Incorect input");
+                        Menu.Instance.IncorectInput();
                         break;
                 }
-            }
 
+            }
         }
     }
 }

@@ -16,7 +16,13 @@ namespace ParkingLibrary
         private Timer retentionTimer;
         public decimal Balance { get; set; } = 0;
 
-        private Logger logger = new Logger("Transactions.log");
+        private Logger logger = new Logger(Settings.File);
+
+        private static Parking instance = new Parking();
+        Parking()
+        {
+
+        }
 
         public string AddCar(Car car)
         {
@@ -133,7 +139,13 @@ namespace ParkingLibrary
         {
             Cars.First(x => x.Id == id).AddBalance(balance);
             return "Done.";
-
         }
+
+        public decimal ShowBalanceCar( int id)
+        {
+            var car = Cars.First(x => x.Id == id);
+            return car.Balance;
+        }
+        public static Parking Instance { get { return instance; } }
     }
 }

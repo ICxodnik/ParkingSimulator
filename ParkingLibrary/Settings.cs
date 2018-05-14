@@ -8,6 +8,7 @@ namespace ParkingLibrary
 {
      public static class Settings
     {
+        public readonly static string File = "Transactions.log";
         public readonly static TimeSpan Timer = new TimeSpan(0,0,10);
         public readonly static Dictionary<CarType, decimal> Prices = new Dictionary<CarType, decimal>
         {

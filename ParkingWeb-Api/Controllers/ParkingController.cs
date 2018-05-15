@@ -1,31 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ParkingLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using ParkingLibrary;
 
 namespace ParkingWeb_Api.Controllers
 {
-    //-Кількість вільних місць(GET)
-    //-Кількість зайнятих місць(GET)
-    //-Загальний дохід(GET)
+    [Route("api/Parking/[action]")]
     public class ParkingController : Controller
     {
+        Parking _parking;
+
+        public ParkingController(Parking parking)
+        {
+            _parking = parking;
+        }
+
         public int GetFreePlace()
         {
-           return  Parking.Instance.GetFreePlace();
+            return _parking.GetFreePlace();
         }
 
         public int GetBusyPlace()
         {
-            return Parking.Instance.GetFreePlace();
+            return _parking.GetBusyPlace();
         }
 
         public decimal GetProfit()
         {
-            return Parking.Instance.Balance;
+            return _parking.Balance;
         }
-
     }
 }

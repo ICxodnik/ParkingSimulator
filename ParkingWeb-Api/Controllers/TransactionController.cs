@@ -10,30 +10,40 @@ using System.Threading.Tasks;
 
 namespace ParkingWeb_Api.Controllers
 {
+    [Route("api/Transaction")]
     public class TransactionController : Controller
     {
-        TransactionRepository _repositoryTranc;
-        CarRepository _repositoryCar;
+        Parking _parking;
 
-        public TransactionController(TransactionRepository repositoryTranc, CarRepository repositoryCar, Parking parking)
+        public TransactionController(Parking parking)
         {
             _parking = parking;
-            _repositoryTranc = repositoryTranc;
-            _repositoryCar = repositoryCar;
-
         }
 
-        public void PutCarBalance(int id, decimal balance)
+        [HttpPut]
+        [Route("{id}/{balance}")]
+        public string PutCarBalance(int id, decimal balance)
         {
-            CarEntity car = _repositoryCar.GetCar(id);
-            _repositoryTranc.PutCarBalance(car, balance);
-
+            return _parking.AddBalanceCar(balance, id);
         }
 
-        public List<Transaction> CarTransactionLastMinute(int id)
+        public List<Transaction> GetTransactions()
         {
-            var tranc = _repositoryTranc.GetTrancLastMinute();
-            return tranc.Where(x => x.carId == id).ToList();
+            return _parking.GetTransactionsForLastMinute().ToList();
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public List<Transaction> GetTransactions(int id)
+        {
+            return _parking.GetTransactionsForLastMinute().Where(trx => trx.carId == id).ToList();
+        }
+
+        [Route("GetLogFile")]
+        [HttpGet]
+        public string GetLogFile()
+        {
+            return _parking.GetTransactionLogs();
         }
     }
 }

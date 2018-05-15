@@ -43,7 +43,10 @@ namespace ParkingWeb_Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "api/{controller=Home}/{action=Index}/{id?}");
+            });
 
             parking.StartWorking();
         }

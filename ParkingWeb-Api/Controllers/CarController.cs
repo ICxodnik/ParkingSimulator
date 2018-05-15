@@ -3,42 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ParkingLibrary;
+using ParkingWeb_Api.Model.DTO;
 
 namespace ParkingWeb_Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Car")]
     public class CarController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        Parking _parking;
+
+        public CarController(Parking parking)
         {
-            return new string[] { "value1", "value2" };
+            _parking = parking;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        public List<Car> GetAll()
         {
-            return "value";
+            return _parking.Cars.ToList();
         }
 
-        // POST api/values
+        [Route("{id}")]
+        public Car GetCar(int id)
+        {
+            return _parking.Cars.FirstOrDefault(car => car.Id == id);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public string DeleteCar(int id)
+        {
+            return _parking.RemoveCar(id);
+        }
+
         [HttpPost]
-        public void Post([FromBody]string value)
+        public string AddNewCar([FromBody]CarDTO carDTO)
         {
-        }
+            Car car = new Car(carDTO.Balance, carDTO.Type);
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return _parking.AddCar(car);
         }
     }
 }

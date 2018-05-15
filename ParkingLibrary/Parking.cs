@@ -31,6 +31,11 @@ namespace ParkingLibrary
                 Console.WriteLine($"Id {tranc.carId}, date {tranc.date}, payment{tranc.payment} grn");
         }
 
+        public string GetTransactionLogs()
+        {
+            return logger.GetContent();
+        }
+
         public string AddCar(Car car)
         {
             if (GetFreePlace() > 0)
@@ -94,8 +99,10 @@ namespace ParkingLibrary
 
         public string DebitMoney(Car car)
         {
-            Transaction transaction = new Transaction(car.Id, GetPayment(car), DateTime.Now);
+            var payment = GetPayment(car);
+            Transaction transaction = new Transaction(car.Id, payment, DateTime.Now);
             Balance += transaction.payment;
+            car.Balance -= payment;
 
             Tracsactions.Add(transaction);
 
@@ -109,12 +116,12 @@ namespace ParkingLibrary
         {
             var now = DateTime.Now;
             var transactionRetentionTime = TimeSpan.FromMinutes(1);
-            var transactions = Tracsactions.Where(tr => tr.date - now <= transactionRetentionTime).ToList();
+            var transactions = Tracsactions.Where(tr => tr.date - now <= transactionRetentionTime);
             if (removeOlder)
             {
-                Tracsactions = transactions;
+                Tracsactions = transactions.ToList();
             }
-            return transactions;
+            return transactions.ToList();
         }
 
         public decimal GetSumMinute()
@@ -145,8 +152,13 @@ namespace ParkingLibrary
 
         public string AddBalanceCar(decimal balance, int id)
         {
-            Cars.First(x => x.Id == id).AddBalance(balance);
-            return "Done.";
+            var car = Cars.FirstOrDefault(x => x.Id == id);
+            if (car != null)
+            {
+                car.AddBalance(balance);
+                return "Done";
+            }
+            return "No such car";
         }
 
         public decimal ShowBalanceCar( int id)

@@ -11,7 +11,7 @@ namespace ParkingLibrary
     public class Parking : IDisposable
     {
         public List<Car> Cars = new List<Car>();
-        private List<Transaction> Tracsactions = new List<Transaction>();
+        public List<Transaction> Tracsactions = new List<Transaction>();
         private Timer paymentTimer;
         private Timer retentionTimer;
         public decimal Balance { get; set; } = 0;
@@ -22,6 +22,18 @@ namespace ParkingLibrary
         Parking()
         {
 
+        }
+
+        public void ShowTransaction()
+        {
+            var transac = Instance.GetTransactionsForLastMinute();
+            foreach (Transaction tranc in transac)
+                Console.WriteLine($"Id {tranc.carId}, date {tranc.date}, payment{tranc.payment} grn");
+        }
+
+        public string GetTransactionLogs()
+        {
+            return logger.GetContent();
         }
 
         public string AddCar(Car car)
@@ -41,14 +53,14 @@ namespace ParkingLibrary
         public string StartWorking()
         {
             paymentTimer = new Timer(Timer, 0, new TimeSpan(0, 0, 10), Settings.Timer);
-            retentionTimer = new Timer((object obj) => DumpLastTransactions(), 0, 0, 60000);
+            retentionTimer = new Timer((object obj) => SumLastTransactions(), 0, 0, 60000);
             return "Done.";
 
         }
 
-        private void DumpLastTransactions()
+        private void SumLastTransactions()
         {
-            var transactions = GetTransactions(true);
+            var transactions = GetTransactionsForLastMinute(true);
             var profit = transactions.Sum(tr => tr.payment);
 
             logger.WriteLine($"{DateTime.Now.ToUniversalTime()} - {profit} profit accuired from {transactions.Count} transaction(s)");
@@ -87,8 +99,10 @@ namespace ParkingLibrary
 
         public string DebitMoney(Car car)
         {
-            Transaction transaction = new Transaction(car.Id, GetPayment(car), DateTime.Now);
+            var payment = GetPayment(car);
+            Transaction transaction = new Transaction(car.Id, payment, DateTime.Now);
             Balance += transaction.payment;
+            car.Balance -= payment;
 
             Tracsactions.Add(transaction);
 
@@ -97,27 +111,28 @@ namespace ParkingLibrary
             return "Done.";
 
         }
-
-        public IList<Transaction> GetTransactions(bool removeOlder = false)
+        
+        public IList<Transaction> GetTransactionsForLastMinute(bool removeOlder = false)
         {
             var now = DateTime.Now;
             var transactionRetentionTime = TimeSpan.FromMinutes(1);
-            var transactions = Tracsactions.Where(tr => tr.date - now <= transactionRetentionTime).ToList();
+            var transactions = Tracsactions.Where(tr => tr.date - now <= transactionRetentionTime);
             if (removeOlder)
             {
-                Tracsactions = transactions;
+                Tracsactions = transactions.ToList();
             }
-            return transactions;
+            return transactions.ToList();
         }
 
         public decimal GetSumMinute()
         {
             decimal sum = 0;
-            var transac = GetTransactions();
+            var transac = GetTransactionsForLastMinute();
             foreach (Transaction tranc in transac)
                 sum += tranc.payment;
             return sum;
         }
+
         public int GetBusyPlace()
         {
             return Cars.Count;
@@ -137,8 +152,13 @@ namespace ParkingLibrary
 
         public string AddBalanceCar(decimal balance, int id)
         {
-            Cars.First(x => x.Id == id).AddBalance(balance);
-            return "Done.";
+            var car = Cars.FirstOrDefault(x => x.Id == id);
+            if (car != null)
+            {
+                car.AddBalance(balance);
+                return "Done";
+            }
+            return "No such car";
         }
 
         public decimal ShowBalanceCar( int id)
